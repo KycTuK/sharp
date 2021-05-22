@@ -4,31 +4,43 @@ namespace credit_calc
 {
 	class Program
 	{
-		double GetMonthPaymentPercent(double TotalDept, double InterestRate, uint PeriodDaysCount, ushort Year)
+		static double GetLoanRatePerMonth(double YearRate)
 		{
-			return ((TotalDept * InterestRate * PeriodDaysCount) / (100));
+			return (YearRate / 12 / 100);
 		}
-		double GetMonthsCount(double PaymentSum, double i, double TotalDept)
+		static double GetMonthAnnuityCoefficient(double MonthCount, double MonthRate)
 		{
-			i /= 1200;
-			return (Math.Log(i, PaymentSum / (PaymentSum - i * TotalDept)));
+			double MonthRateCount = Math.Pow((1 + MonthRate), MonthCount);
+			return (MonthRate * MonthRateCount / (MonthRateCount - 1));
 		}
-		double GetAnnuityPayment(double csum, double i, ushort n)
+		static double GetMonthAnnuityPayment(double TotalSum, double AnnuityCoefficient)
 		{
-			i /= 1200;
-			return ((csum * i * Math.Pow((i + 1), n)) / (Math.Pow((i + 1), n) - 1));
+			return (TotalSum * AnnuityCoefficient);
+		}
+		static double GetMonthPaymentPercent(double TotalSum, double InterestRate, uint PeriodDaysCount, ushort Year)
+		{
+			return ((TotalSum * InterestRate * PeriodDaysCount) / (100));
 		}
 
 		static void Main(string[] args)
-		{/*
-			double sum;
-			double rate;
-			int term;
-			int selectedMonth;
-			double payment;
-		*/
-			Console.WriteLine("> {0}",DateTime.IsLeapYear(DateTime.Now.Year));
-  			Console.WriteLine("Переплата при уменьшении платежа: {сумма переплаты}р.?");
+		{
+
+			double	sum				=	1000000.0	;	//	Credit total summ
+			double	rate			=	12.0		;	//	Annual interest rate
+			int		term			=	10		;	//	Number of loan months
+			// int		selectedMonth	=	0		;	//	Number of month in which early payment was made
+			// double	payment			=	0		;	//	Sum of early payment
+			int		DaysInYear		=	365 + (DateTime.IsLeapYear(DateTime.Now.Year)? 1 : 0);
+
+Console.WriteLine("");
+			Console.WriteLine("Переплата при уменьшении платежа: {0}р."
+				,sum - GetMonthAnnuityPayment(sum
+				,GetMonthAnnuityCoefficient(Convert.ToDouble(term)
+				,GetLoanRatePerMonth(rate)
+				)
+				)
+				);
+
 		}
 	}
 }
