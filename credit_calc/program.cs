@@ -4,17 +4,9 @@ namespace credit_calc
 {
 	class Program
 	{
-		uint GetYearDaysCount(ushort year)
-		{
-			if ((year % 4) != 0 && (year % 100) >= 0)
-				return (366);
-			else if ((year % 400) != 0)
-				return (366);
-			return (365);
-		}
 		double GetMonthPaymentPercent(double TotalDept, double InterestRate, uint PeriodDaysCount, ushort Year)
 		{
-			return ((TotalDept * InterestRate * PeriodDaysCount) / (100 * GetYearDaysCount(Year)));
+			return ((TotalDept * InterestRate * PeriodDaysCount) / (100));
 		}
 		double GetMonthsCount(double PaymentSum, double i, double TotalDept)
 		{
@@ -28,8 +20,15 @@ namespace credit_calc
 		}
 
 		static void Main(string[] args)
-		{
-			Console.WriteLine("WTF?");
+		{/*
+			double sum;
+			double rate;
+			int term;
+			int selectedMonth;
+			double payment;
+		*/
+			Console.WriteLine("> {0}",DateTime.IsLeapYear(DateTime.Now.Year));
+  			Console.WriteLine("Переплата при уменьшении платежа: {сумма переплаты}р.?");
 		}
 	}
 }
