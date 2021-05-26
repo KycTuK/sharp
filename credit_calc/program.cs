@@ -29,11 +29,34 @@ double GetCurrentMonthCount(double TotalSum, double PaymentSum, double LoanRate)
 }
 */
 
-double GetSumReduce(double sum, double rate, double term, DateTime PaymentDate)
+void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate)
 {
-	Console.WriteLine("\t\t|{0:N2}\t\t|{0:N2}\t\t|{0:N2}",PaymentDate,);
+	Console.WriteLine("\t\t|{0:dd.MM.yy}\t|{1:N2}\t\t|{2:N2}"
+		,PaymentDate
+		,GetMonthAnnuityPayment(sum, term, rate / 12)
+		,GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year))
+	);
+	// return ();
 }
 
+/*
+bool ReadParams(string[] args, out double sum, out double rate, out int term,
+            out int selectedMonth, out double payment)
+{
+    bool ret;
+
+    ret = true;
+    ret &= Double.TryParse(args[0], out sum);
+    ret &= Double.TryParse(args[1], out rate);
+    ret &= Int32.TryParse(args[2], out term);
+    ret &= Int32.TryParse(args[3], out selectedMonth);
+    ret &= Double.TryParse(args[4], out payment);
+    if (sum <= 0 || rate <= 0 || term <= 0 || selectedMonth <= 0 || selectedMonth > term || payment <= 0 ||
+        payment > sum)
+        ret &= false;
+    return (ret);
+}
+*/
 void Main(string[] args)
 {
 
@@ -49,6 +72,7 @@ void Main(string[] args)
 	double		Percentages			=	GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
 
 	Console.WriteLine("\t\t|Date\t\t|Payment\t\t|Percentages\t\t");
+	GetSumReduce(sum,rate,term,PaymentDate);
 
 	Console.WriteLine("Percentages: {0}",Percentages);
 	Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
