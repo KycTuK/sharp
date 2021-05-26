@@ -8,9 +8,10 @@ int GetYearDaysCount(int Year)
 {
 	return (DateTime.IsLeapYear(Year) ? 366 : 365);
 }
-int GetPeriodDaysCount(DateTime CurrentDate)
+int GetPeriodDaysCount(DateTime Date)
 {
-	return (CurrentDate.Subtract(CurrentDate.AddMonths(-1)).Days + 1);
+	// return (Date.AddMonths(1).Subtract(Date).Days);
+	return (Date.Subtract(Date.AddMonths(-1)).Days);
 }
 
 double GetMonthAnnuityPayment(double Sum, double MonthCount, double Rate)
@@ -29,13 +30,23 @@ double GetCurrentMonthCount(double TotalSum, double PaymentSum, double LoanRate)
 }
 */
 
-void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate)
+void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate, double MonthAnnuityPayment, double Percentages)
 {
-	Console.WriteLine("\t\t|{0:dd.MM.yy}\t|{1:N2}\t\t|{2:N2}"
-		,PaymentDate
-		,GetMonthAnnuityPayment(sum, term, rate / 12)
-		,GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year))
-	);
+	int i = 0;
+	while (i++ < 10)
+	{
+		Console.WriteLine("\t\t|{0:dd.MM.yy}\t|{1:N2}\t\t|{2:N2}\t\t{3}\t\t{4:N2}"
+			,PaymentDate
+			,MonthAnnuityPayment
+			,Percentages
+			,GetPeriodDaysCount(PaymentDate)
+			,MonthAnnuityPayment - Percentages
+		);
+		PaymentDate = PaymentDate.AddMonths(1);
+		MonthAnnuityPayment = GetMonthAnnuityPayment(sum, term, rate / 12);
+		Percentages = GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
+
+	}
 	// return ();
 }
 
@@ -67,12 +78,12 @@ void Main(string[] args)
 	// double	payment			=	100000		;	//	Sum of early payment
 
 	rate /= 100;
-	DateTime	PaymentDate			=	DateTime.Now.AddDays(1 - DateTime.Now.Day);
+	DateTime	PaymentDate = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(1);
 	double		MonthAnnuityPayment	=	GetMonthAnnuityPayment(sum, term, rate / 12);
 	double		Percentages			=	GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
 
 	Console.WriteLine("\t\t|Date\t\t|Payment\t\t|Percentages\t\t");
-	GetSumReduce(sum,rate,term,PaymentDate);
+	GetSumReduce(sum,rate,term,PaymentDate,MonthAnnuityPayment,Percentages);
 
 	Console.WriteLine("Percentages: {0}",Percentages);
 	Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
