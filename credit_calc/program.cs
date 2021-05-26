@@ -24,33 +24,51 @@ double GetMonthPaymentPercent(double Sum, double Rate, int PeriodDaysCount, int 
 	return Sum * Rate * PeriodDaysCount / YearDaysCount;
 }
 /*
-double GetCurrentMonthCount(double TotalSum, double PaymentSum, double LoanRate)
+double GetCurrentMonthCount(double Sum, double PaymentSum, double LoanRate)
 {
-	return (Math.Log(1 + LoanRate, PaymentSum / (PaymentSum - LoanRate * TotalSum)));
+	return (Math.Log(1 + LoanRate, PaymentSum / (PaymentSum - LoanRate * Sum)));
 }
 */
-
-void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate, double MonthAnnuityPayment, double Percentages)
+void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate, int ExtraPayMonthNum, double ExtraPaySum)
 {
-	int i = 0;
-	while (i++ < 10)
+	int PaymentMonthNum = 0;
+	double Remainder = sum;
+	double MonthAnnuityPayment = GetMonthAnnuityPayment(sum, term, rate / 12);
+	double Percentages;
+	Console.WriteLine("| PayNum \t| Date  \t| Payment \t| TotalDebt \t| Percentages \t| RemainDebt ");
+	Console.WriteLine("|--------\t|-------\t|---------\t|-----------\t|-------------\t|------------");
+	while (PaymentMonthNum++ < term)
 	{
-		Console.WriteLine("\t\t|{0:dd.MM.yy}\t|{1:N2}\t\t|{2:N2}\t\t{3}\t\t{4:N2}"
+
+		PaymentDate = PaymentDate.AddMonths(1);
+		Percentages = GetMonthPaymentPercent(Remainder, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
+		Remainder -= (MonthAnnuityPayment - Percentages);
+		if (PaymentMonthNum == ExtraPayMonthNum)
+		{
+			Remainder -= ExtraPaySum;
+			sum = Remainder;
+			term -= ExtraPayMonthNum;
+			MonthAnnuityPayment = GetMonthAnnuityPayment(sum, term, rate / 12);
+		}
+		if (Percentages > Remainder)
+		{
+			MonthAnnuityPayment += Remainder;
+			Remainder = 0;
+		}
+		Console.WriteLine("|{0,3}\t\t|{1:dd/MM/yy}\t|{2,10:N2}\t|{3,11:N2}\t|{4,10:N2}\t|{5,11:N2}"
+			,PaymentMonthNum
 			,PaymentDate
 			,MonthAnnuityPayment
-			,Percentages
-			,GetPeriodDaysCount(PaymentDate)
 			,MonthAnnuityPayment - Percentages
+			,Percentages
+			,Remainder
 		);
-		PaymentDate = PaymentDate.AddMonths(1);
-		MonthAnnuityPayment = GetMonthAnnuityPayment(sum, term, rate / 12);
-		Percentages = GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
 
 	}
 	// return ();
 }
 
-/*
+
 bool ReadParams(string[] args, out double sum, out double rate, out int term,
             out int selectedMonth, out double payment)
 {
@@ -67,7 +85,7 @@ bool ReadParams(string[] args, out double sum, out double rate, out int term,
         ret &= false;
     return (ret);
 }
-*/
+
 void Main(string[] args)
 {
 
@@ -78,21 +96,22 @@ void Main(string[] args)
 	// double	payment			=	100000		;	//	Sum of early payment
 
 	rate /= 100;
-	DateTime	PaymentDate = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(1);
-	double		MonthAnnuityPayment	=	GetMonthAnnuityPayment(sum, term, rate / 12);
-	double		Percentages			=	GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
+	DateTime	PaymentDate = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(0);
+	// double		MonthAnnuityPayment	=	GetMonthAnnuityPayment(sum, term, rate / 12);
+	// double		Percentages			=	GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
 
-	Console.WriteLine("\t\t|Date\t\t|Payment\t\t|Percentages\t\t");
-	GetSumReduce(sum,rate,term,PaymentDate,MonthAnnuityPayment,Percentages);
+	// Console.WriteLine("{0}:d",DateTime.Parse("01/01/2021",enUS));
 
-	Console.WriteLine("Percentages: {0}",Percentages);
-	Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
-	Console.WriteLine("Переплата при уменьшении платежа: {0:N2}р.",sum - MonthAnnuityPayment);
+	GetSumReduce(sum,rate,term,PaymentDate, 5, 100000);
 
-	Console.WriteLine("CurrentDate: {0}",PaymentDate);
-	Console.WriteLine("CurrentDate: {0}",PaymentDate.AddMonths(-1));
-	Console.WriteLine("GetPeriodDaysCount: {0}",GetPeriodDaysCount(PaymentDate));
-	Console.WriteLine("GetYearDaysCount: {0}",GetYearDaysCount(PaymentDate.Year));
+	// Console.WriteLine("Percentages: {0}",Percentages);
+	// Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
+	// Console.WriteLine("Переплата при уменьшении платежа: {0:N2}р.",sum - MonthAnnuityPayment);
+
+	// Console.WriteLine("CurrentDate: {0}",PaymentDate);
+	// Console.WriteLine("CurrentDate: {0}",PaymentDate.AddMonths(-1));
+	// Console.WriteLine("GetPeriodDaysCount: {0}",GetPeriodDaysCount(PaymentDate));
+	// Console.WriteLine("GetYearDaysCount: {0}",GetYearDaysCount(PaymentDate.Year));
 /*
 	int i = 4;
 	while (i++ > 0)
