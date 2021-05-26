@@ -43,13 +43,7 @@ void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate, in
 		PaymentDate = PaymentDate.AddMonths(1);
 		Percentages = GetMonthPaymentPercent(Remainder, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
 		Remainder -= (MonthAnnuityPayment - Percentages);
-		if (PaymentMonthNum == ExtraPayMonthNum)
-		{
-			Remainder -= ExtraPaySum;
-			sum = Remainder;
-			term -= ExtraPayMonthNum;
-			MonthAnnuityPayment = GetMonthAnnuityPayment(sum, term, rate / 12);
-		}
+
 		if (Percentages > Remainder)
 		{
 			MonthAnnuityPayment += Remainder;
@@ -63,12 +57,19 @@ void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate, in
 			,Percentages
 			,Remainder
 		);
+		if (PaymentMonthNum == ExtraPayMonthNum)
+		{
+			Remainder -= ExtraPaySum;
+			sum = Remainder;
+			// term -= ExtraPayMonthNum;
+			MonthAnnuityPayment = GetMonthAnnuityPayment(Remainder, term - ExtraPayMonthNum, rate / 12);
+		}
 
 	}
 	// return ();
 }
 
-
+/*
 bool ReadParams(string[] args, out double sum, out double rate, out int term,
             out int selectedMonth, out double payment)
 {
@@ -85,6 +86,7 @@ bool ReadParams(string[] args, out double sum, out double rate, out int term,
         ret &= false;
     return (ret);
 }
+*/
 
 void Main(string[] args)
 {
