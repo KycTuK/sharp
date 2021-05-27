@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
+using System;
 using System.Data;
 using System.Runtime.InteropServices;
 
@@ -49,7 +50,7 @@ void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate, in
 			MonthAnnuityPayment += Remainder;
 			Remainder = 0;
 		}
-		Console.WriteLine("|{0,3}\t\t|{1:dd/MM/yy}\t|{2,10:N2}\t|{3,11:N2}\t|{4,10:N2}\t|{5,11:N2}"
+		Console.WriteLine("|{0,3}\t\t|{1:MM/dd/yy}\t|{2,10:N2}\t|{3,11:N2}\t|{4,10:N2}\t|{5,11:N2}"
 			,PaymentMonthNum
 			,PaymentDate
 			,MonthAnnuityPayment
@@ -69,24 +70,40 @@ void GetSumReduce(double sum, double rate, double term, DateTime PaymentDate, in
 	// return ();
 }
 
-/*
-bool ReadParams(string[] args, out double sum, out double rate, out int term,
-            out int selectedMonth, out double payment)
-{
-    bool ret;
 
-    ret = true;
-    ret &= Double.TryParse(args[0], out sum);
-    ret &= Double.TryParse(args[1], out rate);
-    ret &= Int32.TryParse(args[2], out term);
-    ret &= Int32.TryParse(args[3], out selectedMonth);
-    ret &= Double.TryParse(args[4], out payment);
-    if (sum <= 0 || rate <= 0 || term <= 0 || selectedMonth <= 0 || selectedMonth > term || payment <= 0 ||
-        payment > sum)
-        ret &= false;
-    return (ret);
+bool ReadParams(string[] args, out double sum, out double rate, out int term, ref int selectedMonth, ref double payment)
+{
+	bool IsCorrect = true;
+
+	// int ParamNumber = 0;
+	// while (ParamNumber <= args.Length)
+	// {
+	// 	switch(ParamNumber)
+	// 	{
+	// 		case 0: {IsCorrect &= Double.TryParse(args[ParamNumber], out sum); break;};
+	// 		case 1: {IsCorrect &= Double.TryParse(args[ParamNumber], out rate); break;};
+	// 		case 2: {IsCorrect &= Int32.TryParse(args[ParamNumber], out term); break;};
+	// 		case 3: {IsCorrect &= Int32.TryParse(args[ParamNumber], out selectedMonth); break;};
+	// 		case 4: {IsCorrect &= Double.TryParse(args[ParamNumber], out payment); break;};
+	// 		default: {break;}
+	// 	}
+	// 	ParamNumber++;
+	// }
+
+	IsCorrect &= Double.TryParse(args[0], out sum);
+	IsCorrect &= Double.TryParse(args[1], out rate);
+	IsCorrect &= Int32.TryParse(args[2], out term);
+	IsCorrect &= (sum > 0 && rate > 0 && term > 0);
+	if (args.Length == 5)
+	{
+		IsCorrect &= Int32.TryParse(args[3], out selectedMonth);
+		IsCorrect &= Double.TryParse(args[4], out payment);
+		IsCorrect &= (selectedMonth > 0 && selectedMonth <= term);
+		IsCorrect &= (payment > 0 && payment <= sum);
+	}
+	return (IsCorrect);
 }
-*/
+
 
 void Main(string[] args)
 {
@@ -94,17 +111,33 @@ void Main(string[] args)
 	double	sum				=	1000000.0	;	//	Credit total summ
 	double	rate			=	12.0		;	//	Annual interest rate
 	int		term			=	10			;	//	Number of loan months
-	// int		selectedMonth	=	5			;	//	Number of month in which early payment was made
-	// double	payment			=	100000		;	//	Sum of early payment
+	int		selectedMonth	=	5			;	//	Number of month in which early payment was made
+	double	payment			=	100000		;	//	Sum of early payment
 
-	rate /= 100;
+	// Console.WriteLine(": {0}",sum);
+	// Console.WriteLine(": {0}",rate);
+	// Console.WriteLine(": {0}",term);
+	// Console.WriteLine(": {0}",selectedMonth);
+	// Console.WriteLine(": {0}",payment);
+	selectedMonth = 0;
+	payment = 0;
+
 	DateTime	PaymentDate = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(0);
 	// double		MonthAnnuityPayment	=	GetMonthAnnuityPayment(sum, term, rate / 12);
 	// double		Percentages			=	GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
-
 	// Console.WriteLine("{0}:d",DateTime.Parse("01/01/2021",enUS));
 
-	GetSumReduce(sum,rate,term,PaymentDate, 5, 100000);
+	// Console.WriteLine("ReadParams: {0}",ReadParams(args, out sum, out rate, out term, ref selectedMonth, ref payment));
+
+	if (args.Length != 5 && args.Length != 3 || !ReadParams(args, out sum, out rate, out term, ref selectedMonth, ref payment))
+	{
+		Console.WriteLine("Something went wrong. Check your input and retry.");
+		Environment.Exit(0);
+	}
+
+	GetSumReduce(sum, rate / 100, term, PaymentDate, selectedMonth, payment);
+
+
 
 	// Console.WriteLine("Percentages: {0}",Percentages);
 	// Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
