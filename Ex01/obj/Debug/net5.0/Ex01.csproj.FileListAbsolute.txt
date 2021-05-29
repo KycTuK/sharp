@@ -1,0 +1,15 @@
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.csprojAssemblyReference.cache
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.GeneratedMSBuildEditorConfig.editorconfig
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.AssemblyInfoInputs.cache
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.AssemblyInfo.cs
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.csproj.CoreCompileInputs.cache
+/Users/hwindu/Desktop/prj/Day00/Ex01/bin/Debug/net5.0/Ex01.deps.json
+/Users/hwindu/Desktop/prj/Day00/Ex01/bin/Debug/net5.0/Ex01.runtimeconfig.json
+/Users/hwindu/Desktop/prj/Day00/Ex01/bin/Debug/net5.0/Ex01.runtimeconfig.dev.json
+/Users/hwindu/Desktop/prj/Day00/Ex01/bin/Debug/net5.0/Ex01.dll
+/Users/hwindu/Desktop/prj/Day00/Ex01/bin/Debug/net5.0/ref/Ex01.dll
+/Users/hwindu/Desktop/prj/Day00/Ex01/bin/Debug/net5.0/Ex01.pdb
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.dll
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/ref/Ex01.dll
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.pdb
+/Users/hwindu/Desktop/prj/Day00/Ex01/obj/Debug/net5.0/Ex01.genruntimeconfig.cache

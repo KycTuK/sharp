@@ -1,5 +1,8 @@
-﻿
+﻿using System.Globalization;
+using System.Linq;
+
 using System;
+using System.IO;
 
 
 int MinNumber(int a, int b, int c)
@@ -7,7 +10,7 @@ int MinNumber(int a, int b, int c)
 	return ((a = a > b ? b : a) > c ? c : a);
 }
 
-int LevenshteinDis(string str1, string str2)
+int GetLevenshteinDistance(string str1, string str2)
 {
 	int diffChar;
 	int len1 = str1.Length + 1;
@@ -29,68 +32,79 @@ int LevenshteinDis(string str1, string str2)
 	return (mas[len1 - 1, len2 - 1]);
 }
 
-bool searchExactName(string name, string[] allName)
+bool SearchTheName(string SearchedName, string[] NameList)
 {
-	foreach (string nameBase in allName)
+	foreach (string Name in NameList)
 	{
-		if (name == nameBase)
+		if (SearchedName == Name)
 			return (true);
 	}
 	return (false);
 }
 
 
-bool NameClarification(string name)
+bool NameClarification(string Name)
 {
-	string answer;
+	ConsoleKey PressedKey;
 
-	Console.WriteLine($">Did you mean “{name}”? Y/N");
-	while ((answer = Console.ReadLine()) != null)
+	Console.Write($"$ Did you mean ”{Name}”? (Y/N): ");
+	while ((PressedKey = Console.ReadKey().Key) != ConsoleKey.Escape)	// Just for fun!
 	{
-		if (answer == "y" || answer == "Y")
+		Console.WriteLine();
+		if (PressedKey == ConsoleKey.Y)
 			return (true);
-		if (answer == "N" || answer == "n")
+		else
+		if (PressedKey == ConsoleKey.N)
 			return (false);
-		Console.WriteLine("The answer can be either Y (yes) or N (no)");
+		else
+			Console.Write("$ The answer can be either Y (yes) or N (no): ");
 	}
-	return (false);
-}
-
-bool CheckedValidSimvols(string name)
-{
-	if (name == "")
-		return (false);
-	foreach (char c in name)
-	{
-		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == ' ' || c == '-'))
-			return (false);
-	}
+	Console.WriteLine();
 	return (true);
 }
 
-string NameVerification(string name)
+bool IsValid(string Name)
 {
-	string[] allNames;
+	if (Name.Length == 0)
+		return (false);
+	foreach (char c in Name)
+		if (!(Enumerable.Range('A','Z').Contains(Char.ToUpper(c)) || " -".Contains(c)))
+			return (false);
+	return (true);
+}
 
-	if (!CheckedValidSimvols(name))
+string NameVerification(string Name, string[] NamesList)
+{
+	Name.Trim();
+	if (!IsValid(Name))
 		return (null);
-	allNames = File.ReadAllLines("names.txt");
-	if (searchExactName(name, allNames))
-		return (name);
-	foreach (string possibleName in allNames)
+
+	if (SearchTheName(Name, NamesList))
+		return (Name);
+	foreach (string PredictName in NamesList)
 	{
-		if (LevenshteinDis(name, possibleName) < 3 && NameClarification(possibleName))
-			return (possibleName);
+		if (GetLevenshteinDistance(Name, PredictName) < 2 && NameClarification(PredictName))
+			return (PredictName);
 	}
 	return (null);
 }
 
+string Name;
+string FileName;
+string[] NamesList;
 
-string name;
+FileName = "names.txt";
 
-Console.WriteLine(">Enter name:");
-if ((name = NameVerification(Console.ReadLine())) == null)
-	Console.WriteLine("Your name was not found");
+if (!File.Exists(FileName))
+{
+	Console.WriteLine($"File ”{FileName}” Read Error! Check is it exists and avalible.");
+	Environment.Exit(0);
+}
+
+NamesList = File.ReadAllLines(FileName);
+Console.WriteLine("$ Enter Name: ");
+if ((Name = NameVerification(Console.ReadLine(), NamesList)) == null)
+	Console.WriteLine("$ Your Name was not found!");
 else
-	Console.WriteLine($"Hello, {name}!");
+	Console.WriteLine($"$ Hello, {Name}!");
 
