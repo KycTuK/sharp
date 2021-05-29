@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "A60VUFcWT8UWgddYuWwYvZQy9x5q5s/zfF29fleyAPQH+0N58tN50iCY+M/Ux6zZV1Ks31W7kIrFQmI5TJFQKA==",
+  "dgSpecHash": "VLHyTSChbEbpyZFMJ7jWt5/BmC4q+wViI+i5k36ME23XdrANTO7q089ORnAkF1iXkrMXejiG0aE0/0uZn3Rf2A==",
   "success": true,
-  "projectFilePath": "/Users/hwindu/Desktop/prj/sharp/Ex00/credit_calc.csproj",
+  "projectFilePath": "/Users/hwindu/Desktop/prj/Day00/Ex00/credit_calc.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/hwindu/Desktop/prj/sharp/Ex00/credit_calc.csproj",
+      "projectUniqueName": "/Users/hwindu/Desktop/prj/Day00/Ex00/credit_calc.csproj",
       "projectName": "credit_calc",
-      "projectPath": "/Users/hwindu/Desktop/prj/sharp/Ex00/credit_calc.csproj",
+      "projectPath": "/Users/hwindu/Desktop/prj/Day00/Ex00/credit_calc.csproj",
       "packagesPath": "/Users/hwindu/.nuget/packages/",
-      "outputPath": "/Users/hwindu/Desktop/prj/sharp/Ex00/obj/",
+      "outputPath": "/Users/hwindu/Desktop/prj/Day00/Ex00/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/hwindu/.nuget/NuGet/NuGet.Config"

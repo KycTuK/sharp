@@ -1,7 +1,4 @@
-﻿// using System.Runtime.CompilerServices;
-using System;
-using System.Data;
-using System.Runtime.InteropServices;
+﻿using System;
 
 string Replicate(char ch, int count)
 {
