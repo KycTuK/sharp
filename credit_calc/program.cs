@@ -3,14 +3,11 @@ using System;
 using System.Data;
 using System.Runtime.InteropServices;
 
-Main(args);
-
 string Replicate(char ch, int count)
 {
 	string str = new String(ch, count);
 	return str;
 }
-
 void WriteTableHorizontalLine(int TableCellLength)
 {
 	Console.WriteLine("{0}{0}{0}{0}{0}{0}|"
@@ -24,18 +21,10 @@ void WriteTableName(string TableName, int TableLength)
 }
 void WriteTableHead()
 {
-	// Console.WriteLine("| {0} \t| {1} \t| {2} \t| {3}\t| {4} \t| {5} |"
-	// 	,"№ платежа"
-	// 	,"Дата платежа"
-	// 	,"Платеж"
-	// 	,"Основной долг"
-	// 	,"Проценты"
-	// 	,"Остаток долга"
-	// };
 	Console.WriteLine("| {0} \t| {1} \t| {2}\t| {3}\t| {4} \t| {5} |"
 		,"№ платежа"
 		,"Дата платежа"
-		,"Сумма платежа"
+		,"Платеж"	//"Сумма платежа"
 		,"Основной долг"
 		,"Проценты"
 		,"Остаток долга"
@@ -59,7 +48,6 @@ void WriteTableOverPayment(string OverPaymentName, double OverPaymentSum, int Ta
 	Console.WriteLine("{0}{1}|", OverPayMessage, Replicate(' ',TableSize - OverPayMessage.Length + 1));
 	Console.WriteLine("|{0}|",Replicate('-',TableSize));
 }
-
 
 int GetYearDaysCount(int Year)
 {
@@ -86,10 +74,9 @@ int GetCurrentMonthCount(double MonthAnnuityPayment, double Payment, double i)
 	return (int)Math.Ceiling(Math.Log(MonthAnnuityPayment / (MonthAnnuityPayment - i * Payment), 1 + i));
 }
 
-
 double GetPaymentCalc(double sum, double rate, double term, DateTime PaymentDate, int ExtraPayMonthNum, double ExtraPaySum, bool IsSumReduce)
 {
-	int PaymentMonthNum = 0;
+	int PaymentNumber = 0;
 	double RemainDebt = sum;
 	double i = rate / 12;
 	double MonthAnnuityPayment = GetMonthAnnuityPayment(sum, term, i);
@@ -100,40 +87,34 @@ double GetPaymentCalc(double sum, double rate, double term, DateTime PaymentDate
 	WriteTableName("ДОСРОЧНОЕ ПОГАШЕНИЕ С УМЕНЬШЕНИЕМ " + (IsSumReduce? "СУММЫ" : "СРОКА"), 95);
 	WriteTableHorizontalLine(15);
 	WriteTableHead();
-	while (PaymentMonthNum++ < term)
+	while (PaymentNumber++ < term)
 	{
 		PaymentDate = PaymentDate.AddMonths(1);
 		Percentages = GetMonthPaymentPercent(RemainDebt, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
-		Overpayment += Percentages;
 		Payment = MonthAnnuityPayment - Percentages;
 		RemainDebt -= Payment;
 
-		if (PaymentMonthNum == term)	// Percentages > RemainDebt ?
+		if (PaymentNumber == term)	// Percentages > RemainDebt ?
 		{
 			MonthAnnuityPayment += RemainDebt;
+			MonthAnnuityPayment += GetMonthPaymentPercent(RemainDebt, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
 			RemainDebt = 0;
 		}
-		WriteTableValue(PaymentMonthNum, PaymentDate, MonthAnnuityPayment, Payment, Percentages, RemainDebt);
-		if (PaymentMonthNum == ExtraPayMonthNum)
+		Overpayment += MonthAnnuityPayment;
+
+		WriteTableValue(PaymentNumber, PaymentDate, MonthAnnuityPayment, Payment, Percentages, RemainDebt);
+		if (PaymentNumber == ExtraPayMonthNum)
 		{
+			RemainDebt -= ExtraPaySum;
+			Overpayment += ExtraPaySum;
 			if (IsSumReduce)
-			{
-				RemainDebt -= ExtraPaySum;
-				sum = RemainDebt;
 				MonthAnnuityPayment = GetMonthAnnuityPayment(RemainDebt, term - ExtraPayMonthNum, i);
-			}
 			else
-			{
-				RemainDebt -= ExtraPaySum;
 				term -= GetCurrentMonthCount(MonthAnnuityPayment, Payment, i);
-				//(int)Math.Ceiling(Math.Log(MonthAnnuityPayment / (MonthAnnuityPayment - i * Payment), 1 + i));
-			}
-
 		}
-
 	}
 	WriteTableHorizontalLine(15);
-	return (Overpayment);
+	return (Overpayment - sum);
 }
 
 
@@ -155,69 +136,53 @@ bool GetOuterParams(string[] args, out double sum, out double rate, out int term
 	return (IsCorrect);
 }
 
+double	sum				=	1000000.0	;	//	Credit total summ
+double	rate			=	12.0		;	//	Annual interest rate
+int		term			=	10			;	//	Number of loan months
+int		selectedMonth	=	5			;	//	Number of month in which early payment was made
+double	payment			=	100000		;	//	Sum of early payment
 
-void Main(string[] args)
+DateTime	PaymentDate = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(0); //"01.01.2021"
+double		OverPayment;
+
+sum				= 0;
+rate			= 0;
+term			= 0;
+selectedMonth	= 0;
+payment			= 0;
+selectedMonth	= 0;
+payment			= 0;
+
+if (
+	!((args.Length == 5 || args.Length == 3) && GetOuterParams(args, out sum, out rate, out term, ref selectedMonth, ref payment))
+)
 {
-
-	double	sum				=	1000000.0	;	//	Credit total summ
-	double	rate			=	12.0		;	//	Annual interest rate
-	int		term			=	10			;	//	Number of loan months
-	int		selectedMonth	=	5			;	//	Number of month in which early payment was made
-	double	payment			=	100000		;	//	Sum of early payment
-
-	DateTime	PaymentDate = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(0);
-	double		OverPayment;
-
-	sum				= 0;
-	rate			= 0;
-	term			= 0;
-	selectedMonth	= 0;
-	payment			= 0;
-	selectedMonth	= 0;
-	payment			= 0;
-
-	// Console.WriteLine(": {0}",sum);
-	// Console.WriteLine(": {0}",rate);
-	// Console.WriteLine(": {0}",term);
-	// Console.WriteLine(": {0}",selectedMonth);
-	// Console.WriteLine(": {0}",payment);
-
-	// double		MonthAnnuityPayment	=	GetMonthAnnuityPayment(sum, term, rate / 12);
-	// double		Percentages			=	GetMonthPaymentPercent(sum, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
-	// Console.WriteLine("{0}:d",DateTime.Parse("01/01/2021",enUS));
-
-	// Console.WriteLine("ReadParams: {0}",GetOuterParams(args, out sum, out rate, out term, ref selectedMonth, ref payment));
-
-	if (
-		!((args.Length == 5 || args.Length == 3) && GetOuterParams(args, out sum, out rate, out term, ref selectedMonth, ref payment))
-	)
-	{
-		Console.WriteLine("Something went wrong. Check your input and retry.");
-		Environment.Exit(0);
-	}
-	OverPayment = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, true);
-	WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPayment,95);
-	// OverPayment = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, false);
-	// WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPayment,95);
-
-
-
-
-
-	// Console.WriteLine("Percentages: {0}",Percentages);
-	// Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
-	// Console.WriteLine("Переплата при уменьшении платежа: {0:N2}р.",sum - MonthAnnuityPayment);
-
-	// Console.WriteLine("CurrentDate: {0}",PaymentDate);
-	// Console.WriteLine("CurrentDate: {0}",PaymentDate.AddMonths(-1));
-	// Console.WriteLine("GetPeriodDaysCount: {0}",GetPeriodDaysCount(PaymentDate));
-	// Console.WriteLine("GetYearDaysCount: {0}",GetYearDaysCount(PaymentDate.Year));
-/*
-	int i = 4;
-	while (i++ > 0)
-	{
-		Percentages =
-	}
-	Console.WriteLine(" {0} ", GetMonthPaymentPercent(sum, MonthRate, PeriodDaysCount));
-*/
+	Console.WriteLine("Something went wrong. Check your input and retry.");
+	Environment.Exit(0);
 }
+OverPayment = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, true);
+WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPayment,95);
+OverPayment = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, false);
+WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPayment,95);
+
+
+
+
+
+// Console.WriteLine("Percentages: {0}",Percentages);
+// Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
+// Console.WriteLine("Переплата при уменьшении платежа: {0:N2}р.",sum - MonthAnnuityPayment);
+
+// Console.WriteLine("CurrentDate: {0}",PaymentDate);
+// Console.WriteLine("CurrentDate: {0}",PaymentDate.AddMonths(-1));
+// Console.WriteLine("GetPeriodDaysCount: {0}",GetPeriodDaysCount(PaymentDate));
+// Console.WriteLine("GetYearDaysCount: {0}",GetYearDaysCount(PaymentDate.Year));
+/*
+int i = 4;
+while (i++ > 0)
+{
+	Percentages =
+}
+Console.WriteLine(" {0} ", GetMonthPaymentPercent(sum, MonthRate, PeriodDaysCount));
+*/
+
