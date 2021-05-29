@@ -1,2 +1,2 @@
-# sharp
+# Day00
 C# projects
