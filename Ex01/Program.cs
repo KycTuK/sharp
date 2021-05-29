@@ -1,18 +1,16 @@
-﻿using System.Globalization;
-using System.Linq;
-
-using System;
+﻿using System;
 using System.IO;
+using System.Linq;
+using System.Globalization;
 
-
-int MinNumber(int a, int b, int c)
+int GetMinNumber(int a, int b, int c)
 {
 	return ((a = a > b ? b : a) > c ? c : a);
 }
 
 int GetLevenshteinDistance(string str1, string str2)
 {
-	int diffChar;
+	int IsCharEqual;
 	int len1 = str1.Length + 1;
 	int len2 = str2.Length + 1;
 	int [,]mas = new int [len1, len2];
@@ -22,13 +20,11 @@ int GetLevenshteinDistance(string str1, string str2)
 	for (int i = 0; i < len2; i++)
 		mas[0, i] = i;
 	for (int i = 1; i < len1; i++)
-	{
 		for (int j = 1; j < len2; j++)
 		{
-			diffChar = str1[i - 1] == str2[j - 1] ? 0 : 1;
-			mas[i, j] = MinNumber(mas[i, j - 1] + 1, mas[i - 1, j] + 1, mas[i - 1, j - 1] + diffChar);
+			IsCharEqual = str1[i - 1] == str2[j - 1] ? 0 : 1;
+			mas[i, j] = GetMinNumber(mas[i, j - 1] + 1, mas[i - 1, j] + 1, mas[i - 1, j - 1] + IsCharEqual);
 		}
-	}
 	return (mas[len1 - 1, len2 - 1]);
 }
 
@@ -47,7 +43,7 @@ bool NameClarification(string Name)
 {
 	ConsoleKey PressedKey;
 
-	Console.Write($"$ Did you mean ”{Name}”? (Y/N): ");
+	Console.Write($">Did you mean ”{Name}”? (Y/N): ");
 	while ((PressedKey = Console.ReadKey().Key) != ConsoleKey.Escape)	// Just for fun!
 	{
 		Console.WriteLine();
@@ -57,7 +53,7 @@ bool NameClarification(string Name)
 		if (PressedKey == ConsoleKey.N)
 			return (false);
 		else
-			Console.Write("$ The answer can be either Y (yes) or N (no): ");
+			Console.Write(">The answer can be either Y (yes) or N (no): ");
 	}
 	Console.WriteLine();
 	return (true);
@@ -73,12 +69,11 @@ bool IsValid(string Name)
 	return (true);
 }
 
-string NameVerification(string Name, string[] NamesList)
+string NameVerification(string Name, ref string[] NamesList)
 {
 	Name.Trim();
 	if (!IsValid(Name))
 		return (null);
-
 	if (SearchTheName(Name, NamesList))
 		return (Name);
 	foreach (string PredictName in NamesList)
@@ -97,14 +92,14 @@ FileName = "names.txt";
 
 if (!File.Exists(FileName))
 {
-	Console.WriteLine($"File ”{FileName}” Read Error! Check is it exists and avalible.");
+	Console.WriteLine($"File ”{FileName}” Read Error! Check if it exists and available.");
 	Environment.Exit(0);
 }
 
 NamesList = File.ReadAllLines(FileName);
-Console.WriteLine("$ Enter Name: ");
-if ((Name = NameVerification(Console.ReadLine(), NamesList)) == null)
-	Console.WriteLine("$ Your Name was not found!");
+Console.WriteLine(">Enter Name: ");
+if ((Name = NameVerification(Console.ReadLine(), ref NamesList)) == null)
+	Console.WriteLine("Your Name was not found!");
 else
-	Console.WriteLine($"$ Hello, {Name}!");
+	Console.WriteLine($"Hello, {Name}!");
 
