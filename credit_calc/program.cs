@@ -165,14 +165,15 @@ double		OverPaymentDate;
 OverPaymentSum = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, true);
 OverPaymentDate = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, false);
 WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPaymentSum,95);
-WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPaymentDate,95);
+WriteTableOverPayment("Переплата при уменьшении срока: ",OverPaymentDate,95);
+
 if (OverPaymentSum > OverPaymentDate)
-	Console.WriteLine($"Уменьшение платежа выгоднее уменьшения срока на {Math.Abs(OverPaymentSum - OverPaymentDate):0.00} р.");
+	WriteTableOverPayment("Уменьшение платежа выгоднее уменьшения срока на: ",OverPaymentSum - OverPaymentDate,95);
 else
 if (OverPaymentSum < OverPaymentDate)
-	Console.WriteLine($"Уменьшение срока выгоднее уменьшения платежа на {Math.Abs(OverPaymentSum - OverPaymentDate):0.00} р.");
+	WriteTableOverPayment("Уменьшение срока выгоднее уменьшения платежа на: ",OverPaymentDate - OverPaymentSum,95);
 else
-	Console.WriteLine($"Переплата одинакова в обоих вариантах.");
+	WriteTableOverPayment("Переплата одинакова в обоих вариантах, разница: ", 0, 95);
 
 
 
