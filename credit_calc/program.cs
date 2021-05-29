@@ -143,7 +143,6 @@ int		selectedMonth	=	5			;	//	Number of month in which early payment was made
 double	payment			=	100000		;	//	Sum of early payment
 
 DateTime	PaymentDate = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(0); //"01.01.2021"
-double		OverPayment;
 
 sum				= 0;
 rate			= 0;
@@ -153,6 +152,7 @@ payment			= 0;
 selectedMonth	= 0;
 payment			= 0;
 
+// Check input params
 if (
 	!((args.Length == 5 || args.Length == 3) && GetOuterParams(args, out sum, out rate, out term, ref selectedMonth, ref payment))
 )
@@ -160,12 +160,19 @@ if (
 	Console.WriteLine("Something went wrong. Check your input and retry.");
 	Environment.Exit(0);
 }
-OverPayment = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, true);
-WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPayment,95);
-OverPayment = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, false);
-WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPayment,95);
-
-
+double		OverPaymentSum;
+double		OverPaymentDate;
+OverPaymentSum = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, true);
+OverPaymentDate = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, false);
+WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPaymentSum,95);
+WriteTableOverPayment("Переплата при уменьшении платежа: ",OverPaymentDate,95);
+if (OverPaymentSum > OverPaymentDate)
+	Console.WriteLine($"Уменьшение платежа выгоднее уменьшения срока на {Math.Abs(OverPaymentSum - OverPaymentDate):0.00} р.");
+else
+if (OverPaymentSum < OverPaymentDate)
+	Console.WriteLine($"Уменьшение срока выгоднее уменьшения платежа на {Math.Abs(OverPaymentSum - OverPaymentDate):0.00} р.");
+else
+	Console.WriteLine($"Переплата одинакова в обоих вариантах.");
 
 
 
