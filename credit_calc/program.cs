@@ -174,23 +174,3 @@ if (OverPaymentSum < OverPaymentDate)
 	WriteTableOverPayment("Уменьшение срока выгоднее уменьшения платежа на: ",OverPaymentDate - OverPaymentSum,95);
 else
 	WriteTableOverPayment("Переплата одинакова в обоих вариантах, разница: ", 0, 95);
-
-
-
-// Console.WriteLine("Percentages: {0}",Percentages);
-// Console.WriteLine("MonthAnnuityPayment = {0:N2}",MonthAnnuityPayment);
-// Console.WriteLine("Переплата при уменьшении платежа: {0:N2}р.",sum - MonthAnnuityPayment);
-
-// Console.WriteLine("CurrentDate: {0}",PaymentDate);
-// Console.WriteLine("CurrentDate: {0}",PaymentDate.AddMonths(-1));
-// Console.WriteLine("GetPeriodDaysCount: {0}",GetPeriodDaysCount(PaymentDate));
-// Console.WriteLine("GetYearDaysCount: {0}",GetYearDaysCount(PaymentDate.Year));
-/*
-int i = 4;
-while (i++ > 0)
-{
-	Percentages =
-}
-Console.WriteLine(" {0} ", GetMonthPaymentPercent(sum, MonthRate, PeriodDaysCount));
-*/
-
