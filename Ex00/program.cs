@@ -21,7 +21,7 @@ void WriteTableName(string TableName, int TableLength)
 }
 void WriteTableHead()
 {
-	Console.WriteLine("| {0} \t| {1} \t| {2}\t| {3}\t| {4} \t| {5} |"
+	Console.WriteLine("| {0} \t| {1} \t| {2}\t| {3}\t| {4} \t| {5}\t|"
 		,"№ платежа"
 		,"Дата платежа"
 		,"Платеж"	//"Сумма платежа"
@@ -49,9 +49,9 @@ void WriteTableOverPayment(string OverPaymentName, double OverPaymentSum, int Ta
 	Console.WriteLine("|{0}|",Replicate('-',TableSize));
 }
 
-int GetYearDaysCount(int Year)
+int GetYearDaysCount(DateTime Date)
 {
-	return (DateTime.IsLeapYear(Year) ? 366 : 365);
+	return (DateTime.IsLeapYear(Date.AddMonths(-1).Year) ? 366 : 365);
 }
 int GetPeriodDaysCount(DateTime Date)
 {
@@ -90,14 +90,15 @@ double GetPaymentCalc(double sum, double rate, double term, DateTime PaymentDate
 	while (PaymentNumber++ < term)
 	{
 		PaymentDate = PaymentDate.AddMonths(1);
-		Percentages = GetMonthPaymentPercent(RemainDebt, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
+		Percentages = GetMonthPaymentPercent(RemainDebt, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate));
 		Payment = MonthAnnuityPayment - Percentages;
 		RemainDebt -= Payment;
 
 		if (PaymentNumber == term)	// Percentages > RemainDebt ?
 		{
+			Overpayment += GetMonthPaymentPercent(RemainDebt, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate));
 			MonthAnnuityPayment += RemainDebt;
-			MonthAnnuityPayment += GetMonthPaymentPercent(RemainDebt, rate, GetPeriodDaysCount(PaymentDate), GetYearDaysCount(PaymentDate.Year));
+			Payment += RemainDebt;
 			RemainDebt = 0;
 		}
 		Overpayment += MonthAnnuityPayment;
@@ -160,6 +161,7 @@ if (
 	Console.WriteLine("Something went wrong. Check your input and retry.");
 	Environment.Exit(0);
 }
+
 double		OverPaymentSum;
 double		OverPaymentDate;
 OverPaymentSum = GetPaymentCalc(sum, rate / 100, term, PaymentDate, selectedMonth, payment, true);
