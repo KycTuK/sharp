@@ -168,9 +168,9 @@ WriteTableOverPayment("Переплата при уменьшении плате
 WriteTableOverPayment("Переплата при уменьшении срока: ",OverPaymentDate, 95);
 
 if (OverPaymentSum > OverPaymentDate)
-	WriteTableOverPayment("Уменьшение платежа выгоднее уменьшения срока на: ", OverPaymentSum - OverPaymentDate, 95);
+	WriteTableOverPayment("Уменьшение срока выгоднее уменьшения платежа на: ", OverPaymentSum - OverPaymentDate, 95);
 else
-if (OverPaymentSum < OverPaymentDate)
-	WriteTableOverPayment("Уменьшение срока выгоднее уменьшения платежа на: ", OverPaymentDate - OverPaymentSum, 95);
+if (OverPaymentSum > OverPaymentDate)
+	WriteTableOverPayment("Уменьшение платежа выгоднее уменьшения срока на: ", OverPaymentDate - OverPaymentSum, 95);
 else
 	WriteTableOverPayment("Переплата одинакова в обоих вариантах, разница: ", 0, 95);
